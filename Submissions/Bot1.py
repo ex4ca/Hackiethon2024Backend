@@ -55,38 +55,34 @@ class Script:
         unblockable_skills = [DashAttackSkill, OnePunchSkill, Grenade, BearTrap]
 
         # is player under immediate threat
-        if (prim_range(enemy) > 0 and not primary_on_cooldown(enemy)) or (seco_range(enemy) > 0 and secondary_on_cooldown(enemy)): 
+        if (prim_range(enemy) > 0 and not primary_on_cooldown(enemy)) or (seco_range(enemy) > 0) and secondary_on_cooldown(enemy): 
             # TODO: better conditions to check if player is under threat
-            if prim_range(enemy) < distance:
-                return JUMP
             if enemy_projectiles:
                 # once projectile is distance 1 away, can treat as a close range attack
                 enemy_projectile_dist = abs(get_pos(player)[0] - get_proj_pos(enemy_projectiles[0])[0])
-                if enemy_projectile_dist == 1:
+                if enemy_projectile_dist == 0:
                     is_melee = True
-            if prim_range(enemy) == 1:
-                is_melee = True
+            if prim_range(enemy) != 1:
+                is_melee = False
             if is_melee:
                 is_melee = False
                 # block if blockable, else return secondary
-                if get_primary_skill(enemy) in unblockable_skills:
+                if get_primary_skill(enemy) in unblockable_skills or get_secondary_skill(enemy) in unblockable_skills:
                     if secondary_on_cooldown(player):
-                        return JUMP_BACKWARD
+                        return JUMP
                     else:
                         return SECONDARY
                 else:
-                    if get_block_status(player) < 2:
-                        return BLOCK
-                    return JUMP_BACKWARD
+                    return BLOCK, LIGHT
                     
         # if player is NOT under immediate threat
         else:
-            if distance <= 1:
+            if distance == 1:
                 if not primary_on_cooldown(player):
                     return PRIMARY
                 else:
                     if heavy_on_cooldown(player):
-                        return LIGHT
-                    return HEAVY
+                        return LIGHT, LIGHT, LIGHT
+                    return LIGHT, LIGHT, HEAVY
             else:
                 return FORWARD

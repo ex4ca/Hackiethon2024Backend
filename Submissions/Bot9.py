@@ -5,6 +5,11 @@ from ScriptingHelp.usefulFunctions import *
 from Game.playerActions import defense_actions, attack_actions, projectile_actions
 from Game.gameSettings import HP, LEFTBORDER, RIGHTBORDER, LEFTSTART, RIGHTSTART, PARRYSTUN
 
+
+# PRIMARY CAN BE: Teleport, Super Saiyan, Meditate, Dash Attack, Uppercut, One Punch
+# SECONDARY CAN BE : Hadoken, Grenade, Boomerang, Bear Trap
+
+# TODO FOR PARTICIPANT: Set primary and secondary skill here
 PRIMARY_SKILL = OnePunchSkill
 SECONDARY_SKILL = Grenade
 
@@ -31,6 +36,7 @@ NOMOVE = "NoMove"
 moves = SECONDARY,
 moves_iter = iter(moves)
 
+# TODO FOR PARTICIPANT: WRITE YOUR WINNING BOT
 class Script:
     def __init__(self):
         self.primary = PRIMARY_SKILL
@@ -42,7 +48,7 @@ class Script:
 
     # MAIN FUNCTION that returns a single move to the game manager
     def get_move(self, player, enemy, player_projectiles, enemy_projectiles):
-
+        
         # calculate distance between enemy and player
         distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
         grenade_range = 7
@@ -91,11 +97,9 @@ class Script:
                     return LIGHT
             elif distance > 1:
                 if not secondary_on_cooldown(player):
-                    if distance < ((grenade_range // 2) + 1):
+                    if distance < 4:
                         return BACK
-                    else:
+                    if distance >= 4:
                         return SECONDARY
                                              
         return BLOCK
-    
-

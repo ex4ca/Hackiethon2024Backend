@@ -53,10 +53,7 @@ class Script:
         enemy_primary = get_primary_skill(enemy)
         enemy_secondary = get_secondary_skill(enemy)
         unblockable_skills = [DashAttackSkill, OnePunchSkill]
-
-
      
-              
         if get_hp(player) < 25:
             if primary_on_cooldown(enemy):
                 if not secondary_on_cooldown(player):
