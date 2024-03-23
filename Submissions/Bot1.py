@@ -51,28 +51,69 @@ class Script:
         distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
         enemy_primary = get_primary_skill(enemy)
         enemy_secondary = get_secondary_skill(enemy)
+        is_melee = False
+        unblockable_skills = [DashAttackSkill, OnePunchSkill, Grenade, BearTrap]
 
-        if distance == 1:
-            if primary_on_cooldown(enemy) or secondary_on_cooldown(enemy):
-                if heavy_on_cooldown(player):
-                    return LIGHT
-                return HEAVY
+        # is player under immediate threat
+        if (prim_range(enemy) > 0 and not primary_on_cooldown(enemy)) or (seco_range(enemy) > 0 and secondary_on_cooldown(enemy)): 
+            # TODO: better conditions to check if player is under threat
+            if enemy_projectiles:
+                # once projectile is distance 1 away, can treat as a close range attack
+                enemy_projectile_dist = abs(get_pos(player)[0] - get_proj_pos(enemy_projectiles[0])[0])
+                if enemy_projectile_dist == 1:
+                    is_melee = True
+            if prim_range(enemy) == 1:
+                is_melee = True
+            if is_melee:
+                is_melee = False
+                # block if blockable, else return secondary
+                if get_primary_skill(enemy) in unblockable_skills:
+                    if secondary_on_cooldown(player):
+                        return JUMP_BACKWARD
+                    else:
+                        return SECONDARY
+                else:
+                    return BLOCK
+        # if player is NOT under immediate threat
+        else:
+            if distance <= 1:
+                if not primary_on_cooldown(player):
+                    return PRIMARY
+                else:
+                    if heavy_on_cooldown(player):
+                        return LIGHT
+                    return HEAVY
+            else:
+                return FORWARD
 
+        
+
+
+
+
+
+
+
+
+
+
+
+        """
+        if distance == 1 and not primary_on_cooldown(player):
             # non damaging primaries:
             # if enemy has teleport or super jump, can expect to use it when distance = 1
             if enemy_primary == TeleportSkill and not primary_on_cooldown(enemy):
-                if not primary_on_cooldown(player):
-                    return PRIMARY
                 if heavy_on_cooldown(player):
                     return LIGHT
                 return HEAVY
                 
             if enemy_secondary == JumpBoostSkill and not secondary_on_cooldown(enemy):
-                if not primary_on_cooldown(player):
-                    return PRIMARY
                 if heavy_on_cooldown(player):
                     return LIGHT
-                return HEAVY   
+                return HEAVY 
+              
+            return PRIMARY
+            
 
             # if enemy has any skill that attacks within one distance
             if enemy_primary == UppercutSkill and not primary_on_cooldown(enemy):
@@ -99,3 +140,4 @@ class Script:
                 return SECONDARY
                       
         return FORWARD
+        """
