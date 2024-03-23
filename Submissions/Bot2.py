@@ -10,7 +10,7 @@ from Game.gameSettings import HP, LEFTBORDER, RIGHTBORDER, LEFTSTART, RIGHTSTART
 # SECONDARY CAN BE : Hadoken, Grenade, Boomerang, Bear Trap
 
 # TODO FOR PARTICIPANT: Set primary and secondary skill here
-PRIMARY_SKILL = TeleportSkill
+PRIMARY_SKILL = DashAttackSkill
 SECONDARY_SKILL = Hadoken
 
 #constants, for easier move return
@@ -58,7 +58,7 @@ class Script:
         elif distance == 1 and primary_on_cooldown(player):
             return LIGHT
 
-        if distance > 1 and distance <= 7 and not secondary_on_cooldown(player):
+        if distance > 1 and distance <= seco_range(player) and not secondary_on_cooldown(player):
             return SECONDARY
         
         if distance == 1 and primary_on_cooldown(player):
