@@ -52,61 +52,93 @@ class Script:
         distance = abs(get_pos(player)[0] - get_pos(enemy)[0])
         enemy_primary = get_primary_skill(enemy)
         enemy_secondary = get_secondary_skill(enemy)
+        unblockable_skills = [DashAttackSkill, OnePunchSkill]
+
 
      
-
-        if not secondary_on_cooldown(player):
+              
+        if get_hp(player) < 25:
+            if primary_on_cooldown(enemy):
+                if not secondary_on_cooldown(player):
+                    if distance > 1:
+                        if distance < 7:
+                            return SECONDARY
+                        elif distance > 7:
+                            return FORWARD
+                        elif distance > 1 and distance < 7 and not primary_on_cooldown(player):
+                            return FORWARD
+                    elif distance == 1:
+                        if primary_on_cooldown(player):
+                            return BACK
+                        elif not primary_on_cooldown(player):
+                            return PRIMARY      
+                if secondary_on_cooldown(player):
+                    if distance > 1:
+                        if primary_on_cooldown(player):
+                            return BACK
+                        elif not primary_on_cooldown(player):
+                            return FORWARD
+                    elif distance == 1:
+                        if primary_on_cooldown(player) and heavy_on_cooldown(player):
+                            return LIGHT
+                        elif primary_on_cooldown(player) and not heavy_on_cooldown(player):
+                            return HEAVY
+                        elif not primary_on_cooldown(player) and not heavy_on_cooldown(player):
+                            return PRIMARY
+                        elif not primary_on_cooldown(player) and heavy_on_cooldown(player):
+                            return PRIMARY     
+            if not primary_on_cooldown(enemy):  
+                if not secondary_on_cooldown(player):
+                    if distance > 1:
+                        if distance < 7:
+                            return SECONDARY
+                        elif distance > 7:
+                            return FORWARD    
+                elif secondary_on_cooldown:
+                    if distance > 1:
+                        if primary_on_cooldown(player):
+                            return BACK
+                        elif not primary_on_cooldown(player):
+                            return FORWARD
+        elif get_hp(enemy) < 30 and get_hp(player) > 30:
             if distance > 1:
-                if distance < 7:
-                    return SECONDARY
-                elif distance > 7:
-                    return FORWARD
-                elif distance > 1 and distance < 7 and not primary_on_cooldown(player):
-                    return FORWARD
+                return FORWARD
             elif distance == 1:
-                if primary_on_cooldown(player):
-                    return BACK
-                elif not primary_on_cooldown(player):
+                if not primary_on_cooldown(player):
                     return PRIMARY
-            
-        if secondary_on_cooldown(player):
-            if distance > 1:
-                if primary_on_cooldown(player):
-                    return BACK
-                elif not primary_on_cooldown(player):
-                    return FORWARD
-            elif distance == 1:
+                if primary_on_cooldown(player) and not heavy_on_cooldown(player):
+                    return LIGHT, LIGHT, HEAVY
                 if primary_on_cooldown(player) and heavy_on_cooldown(player):
-                    return LIGHT
-                elif primary_on_cooldown(player) and not heavy_on_cooldown(player):
-                    return HEAVY
-                elif not primary_on_cooldown(player) and not heavy_on_cooldown(player):
-                    return PRIMARY
-                elif not primary_on_cooldown(player) and heavy_on_cooldown(player):
-                    return PRIMARY
-                
-            
-        
-            
-
+                    return LIGHT, LIGHT, LIGHT
+        elif get_hp(player) > 29:
+            if not secondary_on_cooldown(player):
+                if distance > 1:
+                    if distance < 7:
+                        return SECONDARY
+                    elif distance > 8:
+                        return FORWARD
+                    elif distance > 1 and distance < 7 and not primary_on_cooldown(player):
+                        return FORWARD
+                elif distance == 1:
+                    if primary_on_cooldown(player):
+                        return BACK
+                    elif not primary_on_cooldown(player):
+                        return PRIMARY
+            elif secondary_on_cooldown(player):
+                if distance > 1:
+                    if primary_on_cooldown(player):
+                        return BACK
+                    elif not primary_on_cooldown(player):
+                        return FORWARD
+                    elif distance == 1:
+                        if primary_on_cooldown(player) and heavy_on_cooldown(player):
+                            return LIGHT
+                        elif primary_on_cooldown(player) and not heavy_on_cooldown(player):
+                            return HEAVY
+                        elif not primary_on_cooldown(player) and not heavy_on_cooldown(player):
+                            return PRIMARY
+                        elif not primary_on_cooldown(player) and heavy_on_cooldown(player):
+                            return PRIMARY
 
         return BLOCK
     
-
-"""
-        if distance == 1 and not primary_on_cooldown(player):
-            return PRIMARY 
-        elif distance == 1 and primary_on_cooldown(player):
-            return LIGHT
-
-        if distance > 3 and distance <= 7 and not secondary_on_cooldown(player):
-            return SECONDARY
-        
-        if distance == 1 and primary_on_cooldown(player):
-            # if enemy has any skill that attacks within one distance
-            if enemy_primary == UppercutSkill and not primary_on_cooldown(enemy):
-                return BLOCK
-            elif enemy_primary == OnePunchSkill and not primary_on_cooldown(enemy):
-                return JUMP_BACKWARD 
-"""            
-
