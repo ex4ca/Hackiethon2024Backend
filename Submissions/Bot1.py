@@ -57,6 +57,8 @@ class Script:
         # is player under immediate threat
         if (prim_range(enemy) > 0 and not primary_on_cooldown(enemy)) or (seco_range(enemy) > 0 and secondary_on_cooldown(enemy)): 
             # TODO: better conditions to check if player is under threat
+            if prim_range(enemy) < distance:
+                return JUMP
             if enemy_projectiles:
                 # once projectile is distance 1 away, can treat as a close range attack
                 enemy_projectile_dist = abs(get_pos(player)[0] - get_proj_pos(enemy_projectiles[0])[0])
@@ -73,7 +75,10 @@ class Script:
                     else:
                         return SECONDARY
                 else:
-                    return BLOCK
+                    if get_block_status(player) < 2:
+                        return BLOCK
+                    return JUMP_BACKWARD
+                    
         # if player is NOT under immediate threat
         else:
             if distance <= 1:
@@ -85,59 +90,3 @@ class Script:
                     return HEAVY
             else:
                 return FORWARD
-
-        
-
-
-
-
-
-
-
-
-
-
-
-        """
-        if distance == 1 and not primary_on_cooldown(player):
-            # non damaging primaries:
-            # if enemy has teleport or super jump, can expect to use it when distance = 1
-            if enemy_primary == TeleportSkill and not primary_on_cooldown(enemy):
-                if heavy_on_cooldown(player):
-                    return LIGHT
-                return HEAVY
-                
-            if enemy_secondary == JumpBoostSkill and not secondary_on_cooldown(enemy):
-                if heavy_on_cooldown(player):
-                    return LIGHT
-                return HEAVY 
-              
-            return PRIMARY
-            
-
-            # if enemy has any skill that attacks within one distance
-            if enemy_primary == UppercutSkill and not primary_on_cooldown(enemy):
-                if not primary_on_cooldown(player):
-                    return PRIMARY
-                return BLOCK
-            
-            if enemy_primary == OnePunchSkill and not primary_on_cooldown(enemy):
-                return JUMP_BACKWARD        
-            
-            return PRIMARY
-
-        # case where enemy has a projectile
-        if enemy_projectiles:
-            enemy_projectile_dist = abs(get_pos(player)[0] - get_proj_pos(enemy_projectiles[0])[0])
-            if enemy_projectile_dist < 1:
-                if not secondary_on_cooldown(player):
-                    return SECONDARY
-                return BLOCK
-        
-        # case where attack is a greater range than 1
-        if get_primary_skill(enemy) == DashAttackSkill and not primary_on_cooldown(enemy):
-            if distance <= prim_range(enemy) and not secondary_on_cooldown(player):
-                return SECONDARY
-                      
-        return FORWARD
-        """
